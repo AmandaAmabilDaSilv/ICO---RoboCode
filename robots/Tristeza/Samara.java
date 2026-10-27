@@ -88,24 +88,28 @@ public class Samara extends Robot {
 	 *
 	 * @param e The scanned robot event containing target information
 	 */
-	public void onScannedRobot(ScannedRobotEvent e) {
-		// Should we stop, or just fire?
-		if (stopWhenSeeRobot) {
-			// Stop everything!  You can safely call stop multiple times.
-			stop();
-			// Call our custom firing method
-			smartFire(e.getDistance());
-			// Actively scan for additional robots
-			// NOTE: If scan() detects a robot, the current onScannedRobot event
-			// will be interrupted, and a new event will be triggered
-			scan();
-			// The code below only executes if no additional robots were detected
-			// to Resume the previous movement pattern
-			resume();
-		} else {
-			smartFire(e.getDistance());
-		}
-	}
+	public void desviar(ScannedRobotEvent e) {
+    // Direção absoluta do inimigo
+    double anguloInimigo = getHeading() + e.getBearing();
+
+    // Anda perpendicularmente à direção do inimigo
+    double direcao = anguloInimigo + 90;
+
+    // Vira para a direção calculada
+    turnRight(normalRelativeAngleDegrees(
+        direcao - getHeading()
+    ));
+
+    // Anda para mudar de posição
+    ahead(100);
+}
+    public void onScannedRobot(ScannedRobotEvent e) {
+       smartFire(e.getDistance());
+
+    // Não para mais para atirar:
+    // movimenta-se para dificultar os disparos inimigos
+      desviar(e);
+    }
 
 	/**
 	 * Adjusts fire power based on distance to target and current energy level.
