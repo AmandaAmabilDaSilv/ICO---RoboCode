@@ -12,6 +12,7 @@ import robocode.*;
 import robocode.DeathEvent;
 import robocode.Robot;
 import robocode.ScannedRobotEvent;
+import robocode.HitByBulletEvent;
 
 import java.awt.*;
 
@@ -60,7 +61,12 @@ public class Samara extends Robot {
 			gunIncrement *= -1;
 		}
 	}
-
+      
+  	    public void onHitByBullet(HitByBulletEvent e) {
+ 	   // Desvia quando for atingido por uma bala
+    	turnRight(90);
+ 	  	 ahead(120);
+		}
 	/**
 	 * Navigates to a corner of the battlefield using a simple but inefficient approach.
 	 * This method could be optimized for better performance.
@@ -80,7 +86,7 @@ public class Samara extends Robot {
 		ahead(5000);
 		// Turn gun to starting point
 		turnGunLeft(90);
-	}
+		}
 
 	/**
 	 * Handles robot detection events. Either stops and fires or just fires
@@ -103,6 +109,8 @@ public class Samara extends Robot {
     // Anda para mudar de posição
     ahead(100);
 }
+
+
     public void onScannedRobot(ScannedRobotEvent e) {
        smartFire(e.getDistance());
 
@@ -126,6 +134,7 @@ public class Samara extends Robot {
 			fire(3); // High power for close range
 		}
 	}
+
 
 	/**
 	 * Evaluates performance after robot destruction and adjusts strategy.
