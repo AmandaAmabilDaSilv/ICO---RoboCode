@@ -12,6 +12,7 @@ import robocode.*;
 import robocode.DeathEvent;
 import robocode.Robot;
 import robocode.ScannedRobotEvent;
+import robocode.HitByBulletEvent;
 
 import java.awt.*;
 
@@ -60,7 +61,12 @@ public class Samara extends Robot {
 			gunIncrement *= -1;
 		}
 	}
-
+      
+  	    public void onHitByBullet(HitByBulletEvent e) {
+ 	   // Desvia quando for atingido por uma bala
+    	turnRight(90);
+ 	  	 ahead(120);
+		}
 	/**
 	 * Navigates to a corner of the battlefield using a simple but inefficient approach.
 	 * This method could be optimized for better performance.
@@ -80,7 +86,7 @@ public class Samara extends Robot {
 		ahead(5000);
 		// Turn gun to starting point
 		turnGunLeft(90);
-	}
+		}
 
 	/**
 	 * Handles robot detection events. Either stops and fires or just fires
@@ -88,24 +94,30 @@ public class Samara extends Robot {
 	 *
 	 * @param e The scanned robot event containing target information
 	 */
-	public void onScannedRobot(ScannedRobotEvent e) {
-		// Should we stop, or just fire?
-		if (stopWhenSeeRobot) {
-			// Stop everything!  You can safely call stop multiple times.
-			stop();
-			// Call our custom firing method
-			smartFire(e.getDistance());
-			// Actively scan for additional robots
-			// NOTE: If scan() detects a robot, the current onScannedRobot event
-			// will be interrupted, and a new event will be triggered
-			scan();
-			// The code below only executes if no additional robots were detected
-			// to Resume the previous movement pattern
-			resume();
-		} else {
-			smartFire(e.getDistance());
-		}
-	}
+	public void desviar(ScannedRobotEvent e) {
+    // Direção absoluta do inimigo
+    double anguloInimigo = getHeading() + e.getBearing();
+
+    // Anda perpendicularmente à direção do inimigo
+    double direcao = anguloInimigo + 90;
+
+    // Vira para a direção calculada
+    turnRight(normalRelativeAngleDegrees(
+        direcao - getHeading()
+    ));
+
+    // Anda para mudar de posição
+    ahead(100);
+}
+
+
+    public void onScannedRobot(ScannedRobotEvent e) {
+       smartFire(e.getDistance());
+
+    // Não para mais para atirar:
+    // movimenta-se para dificultar os disparos inimigos
+      desviar(e);
+    }
 
 	/**
 	 * Adjusts fire power based on distance to target and current energy level.
@@ -122,6 +134,7 @@ public class Samara extends Robot {
 			fire(3); // High power for close range
 		}
 	}
+
 
 	/**
 	 * Evaluates performance after robot destruction and adjusts strategy.
