@@ -38,24 +38,24 @@ public class Samara extends Robot {
 	 */
 	public void run() {
 		// Set colors
-		setBodyColor(Color.red);
-		setGunColor(Color.black);
-		setRadarColor(Color.yellow);
-		setBulletColor(Color.green);
-		setScanColor(Color.green);
+		setBodyColor(Color.pink);
+		setGunColor(Color.blue);
+		setRadarColor(Color.green);
+		setBulletColor(Color.yellow);
+		setScanColor(Color.pink);
 
 		// Save # of other bots
 		others = getOthers();
 
 		// Move to a corner
-		goCorner();
+		//goCorner();
 
-		// Initialize gun turn speed to 3
-		int gunIncrement = 3;
+		// Initialize gun turn speed to 20
+		int gunIncrement = 20;
 
 		// Spin gun back and forth
 		while (true) {
-			for (int i = 0; i < 30; i++) {
+			for (int i = 0; i < 360; i++) {
 				turnGunLeft(gunIncrement);
 			}
 			gunIncrement *= -1;
@@ -64,8 +64,10 @@ public class Samara extends Robot {
       
   	    public void onHitByBullet(HitByBulletEvent e) {
  	   // Desvia quando for atingido por uma bala
-    	turnRight(90);
- 	  	 ahead(120);
+    		fire(2); 
+			turnRight(30);
+		    back(100);
+		
 		}
 	/**
 	 * Navigates to a corner of the battlefield using a simple but inefficient approach.
@@ -128,10 +130,13 @@ public class Samara extends Robot {
 	public void smartFire(double robotDistance) {
 		if (robotDistance > 200 || getEnergy() < 15) {
 			fire(1); // Low power for long distance or when energy is low
+			fire(1);
 		} else if (robotDistance > 50) {
+			fire(2);
 			fire(2); // Medium power for moderate distance
 		} else {
-			fire(3); // High power for close range
+			fire(3); 
+			fire(3);// High power for close range
 		}
 	}
 
