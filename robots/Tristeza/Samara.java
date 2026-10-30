@@ -48,14 +48,14 @@ public class Samara extends Robot {
 		others = getOthers();
 
 		// Move to a corner
-		goCorner();
+		//goCorner();
 
-		// Initialize gun turn speed to 3
-		int gunIncrement = 3;
+		// Initialize gun turn speed to 17
+		int gunIncrement = 17;
 
 		// Spin gun back and forth
 		while (true) {
-			for (int i = 0; i < 30; i++) {
+			for (int i = 0; i < 360; i++) {
 				turnGunLeft(gunIncrement);
 			}
 			gunIncrement *= -1;
@@ -99,7 +99,9 @@ public class Samara extends Robot {
     double anguloInimigo = getHeading() + e.getBearing();
 
     // Anda perpendicularmente à direção do inimigo
+	fire(1);
     double direcao = anguloInimigo + 90;
+	 
 
     // Vira para a direção calculada
     turnRight(normalRelativeAngleDegrees(
@@ -127,10 +129,13 @@ public class Samara extends Robot {
 	 */
 	public void smartFire(double robotDistance) {
 		if (robotDistance > 200 || getEnergy() < 15) {
-			fire(1); // Low power for long distance or when energy is low
+			fire(1);
+            fire(1); // Low power for long distance or when energy is low
 		} else if (robotDistance > 50) {
+			fire(2);
 			fire(2); // Medium power for moderate distance
 		} else {
+			fire(3);
 			fire(3); // High power for close range
 		}
 	}
