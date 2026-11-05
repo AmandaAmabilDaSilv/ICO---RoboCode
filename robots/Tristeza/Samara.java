@@ -20,40 +20,33 @@ import static robocode.util.Utils.normalRelativeAngleDegrees;
 
 
 /**
- * Corners - a sample robot that demonstrates defensive corner positioning and adaptive strategy.
+ * Samara - robô do grupo, nas cores roxo e rosa.
  * <p>
- * This robot moves to a corner, then rotates its gun back and forth scanning for enemies.
- * If it performs poorly in a round, it will try a different corner in the next round.
- *
- * @author Mathew A. Nelson (original)
- * @author Flemming N. Larsen (contributor)
+ * Fica parada girando o canhão para procurar inimigos. Ao encontrar um, atira
+ * com força proporcional à distância e se desloca na perpendicular ao inimigo.
+ * Também reage a tiros recebidos, colisões com paredes e com outros robôs, e
+ * comemora quando vence a rodada.
+ * <p>
+ * Baseado em sample.Corners.
  */
 public class Samara extends Robot {
-	int others; // Tracks the initial number of opponents
-	static int corner = 0; // Current corner angle (static to persist between rounds)
-	boolean stopWhenSeeRobot = false; // Flag to control movement behavior when enemies are detected
+	int others;
+	static int corner = 0;
+	boolean stopWhenSeeRobot = false;
 
-	/**
-	 * Main robot behavior. Sets colors, moves to the corner, and continuously scans for enemies.
-	 */
 	public void run() {
-		// Set colors
 		setBodyColor(new Color(128, 0, 128));   // Corpo: Roxo
 		setGunColor(new Color(255, 105, 180));  // Canhão: Rosa
 		setRadarColor(new Color(186, 85, 211)); // Radar: Orquídea
 		setBulletColor(Color.pink);             // Balas: Rosa
 		setScanColor(Color.magenta);            // Feixe do Radar: Magenta
 
-		// Save # of other bots
 		others = getOthers();
 
-		// Move to a corner
 		//goCorner();
 
-		// Initialize gun turn speed to 20
 		int gunIncrement = 20;
 
-		// Spin gun back and forth
 		while (true) {
 			for (int i = 0; i < 360; i++) {
 				turnGunLeft(gunIncrement);
@@ -70,19 +63,19 @@ public class Samara extends Robot {
 		
 		}
 		
-// Ao colidir com a parede, vira de costas para o obstáculo e afasta-se
+// Ao colidir com a parede, gira pelo inverso do ângulo da parede e dá ré
 	public void onHitWall(HitWallEvent e) {
-		// Vira na direção oposta ao ponto de impacto na parede
+		// Gira o inverso do ângulo (bearing) em que a parede foi atingida
 		turnRight(-e.getBearing());
-		// Dá ré com força para se afastar da borda
+		// Dá ré para se afastar da borda
 		back(150);
 	}
 	 
 	/**
-	 * Ao colidir com outro robo, descarrega tiro a queima roupa e recua.
+	 * Ao colidir com outro robo, atira na forca maxima e se afasta dele.
 	 */
 	public void onHitRobot(HitRobotEvent e) {
-		// Se a arma estiver fria, dispara na forca maxima
+		// Robo a frente: atira e recua; robo atras: atira e avanca
 		if (e.getBearing() > -90 && e.getBearing() <= 90) {
 			fire(3);
 			back(80);
@@ -92,33 +85,16 @@ public class Samara extends Robot {
 		}
 	}
 
-	/**
-	 * Navigates to a corner of the battlefield using a simple but inefficient approach.
-	 * This method could be optimized for better performance.
-	 */
 	public void goCorner() {
-		// We don't want to stop when we're just turning...
 		stopWhenSeeRobot = false;
-		// turn to face the wall to the "right" of our desired corner.
 		turnRight(normalRelativeAngleDegrees(corner - getHeading()));
-		// Ok, now we don't want to crash into any robot in our way...
 		stopWhenSeeRobot = true;
-		// Move to that wall
 		ahead(5000);
-		// Turn to face the corner
 		turnLeft(90);
-		// Move to the corner
 		ahead(5000);
-		// Turn gun to starting point
 		turnGunLeft(90);
 		}
 
-	/**
-	 * Handles robot detection events. Either stops and fires or just fires
-	 * depending on the current movement strategy.
-	 *
-	 * @param e The scanned robot event containing target information
-	 */
 	public void desviar(ScannedRobotEvent e) {
     // Direção absoluta do inimigo
     double anguloInimigo = getHeading() + e.getBearing();
@@ -146,43 +122,29 @@ public class Samara extends Robot {
       desviar(e);
     }
 
-	/**
-	 * Adjusts fire power based on distance to target and current energy level.
-	 * Uses higher fire power at closer ranges for maximum damage.
-	 *
-	 * @param robotDistance the distance to the target robot in pixels
-	 */
 	public void smartFire(double robotDistance) {
 		if (robotDistance > 200 || getEnergy() < 15) {
-			fire(1); // Low power for long distance or when energy is low
+			fire(1);
 			fire(1);
 		} else if (robotDistance > 50) {
 			fire(2);
-			fire(2); // Medium power for moderate distance
+			fire(2);
 		} else {
-			fire(3); 
-			fire(3);// High power for close range
+			fire(3);
+			fire(3);
 		}
 	}
 
 
-	/**
-	 * Evaluates performance after robot destruction and adjusts strategy.
-	 * Changes corner position if performance was poor in the current round.
-	 *
-	 * @param e The death event
-	 */
 	public void onDeath(DeathEvent e) {
-		// Safety check: avoids division by zero, though 'others' should never be 0
 		if (others == 0) {
 			return;
 		}
 
-		// If 75% of the robots are still alive when we die, we'll switch corners.
 		if (getOthers() / (double) others >= .75) {
-			corner += 90; // Rotate 90 degrees to try the next corner
+			corner += 90;
 			if (corner == 270) {
-				corner = -90; // Reset to the first corner after completing the full rotation
+				corner = -90;
 			}
 			out.println("Eu deixei você ganha  " + corner);
 		} else {
