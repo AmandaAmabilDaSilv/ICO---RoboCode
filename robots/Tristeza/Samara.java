@@ -30,6 +30,21 @@ import static robocode.util.Utils.normalRelativeAngleDegrees;
  * Baseado em sample.Corners.
  */
 public class Samara extends Robot {
+	// Varredura do canhão
+	private static final int GIRO_CANHAO_POR_PASSO = 20;   // graus por passo
+	private static final int PASSOS_POR_VARREDURA = 360;   // passos antes de inverter o sentido
+
+	// Distâncias de movimento (pixels)
+	private static final int RECUO_AO_SER_ATINGIDO = 100;
+	private static final int RECUO_NA_PAREDE = 150;
+	private static final int AFASTAMENTO_NA_COLISAO = 80;
+	private static final int DESLOCAMENTO_DESVIO = 100;
+
+	// Escolha da força do tiro
+	private static final int DISTANCIA_LONGE = 200;        // acima disso: tiro fraco
+	private static final int DISTANCIA_PERTO = 50;         // até isso: tiro forte
+	private static final int ENERGIA_BAIXA = 15;           // abaixo disso: tiro fraco
+
 	int others;
 	static int corner = 0;
 	boolean stopWhenSeeRobot = false;
@@ -45,10 +60,10 @@ public class Samara extends Robot {
 
 		//goCorner();
 
-		int gunIncrement = 20;
+		int gunIncrement = GIRO_CANHAO_POR_PASSO;
 
 		while (true) {
-			for (int i = 0; i < 360; i++) {
+			for (int i = 0; i < PASSOS_POR_VARREDURA; i++) {
 				turnGunLeft(gunIncrement);
 			}
 			gunIncrement *= -1;
@@ -59,7 +74,7 @@ public class Samara extends Robot {
  	   // Desvia quando for atingido por uma bala
     		fire(2); 
 			turnRight(30);
-		    back(100);
+		    back(RECUO_AO_SER_ATINGIDO);
 		
 		}
 		
@@ -68,7 +83,7 @@ public class Samara extends Robot {
 		// Gira o inverso do ângulo (bearing) em que a parede foi atingida
 		turnRight(-e.getBearing());
 		// Dá ré para se afastar da borda
-		back(150);
+		back(RECUO_NA_PAREDE);
 	}
 	 
 	/**
@@ -78,10 +93,10 @@ public class Samara extends Robot {
 		// Robo a frente: atira e recua; robo atras: atira e avanca
 		if (e.getBearing() > -90 && e.getBearing() <= 90) {
 			fire(3);
-			back(80);
+			back(AFASTAMENTO_NA_COLISAO);
 		} else {
 			fire(3);
-			ahead(80);
+			ahead(AFASTAMENTO_NA_COLISAO);
 		}
 	}
 
@@ -110,7 +125,7 @@ public class Samara extends Robot {
     ));
 
     // Anda para mudar de posição
-    ahead(100);
+    ahead(DESLOCAMENTO_DESVIO);
 }
 
 
@@ -123,10 +138,10 @@ public class Samara extends Robot {
     }
 
 	public void smartFire(double robotDistance) {
-		if (robotDistance > 200 || getEnergy() < 15) {
+		if (robotDistance > DISTANCIA_LONGE || getEnergy() < ENERGIA_BAIXA) {
 			fire(1);
 			fire(1);
-		} else if (robotDistance > 50) {
+		} else if (robotDistance > DISTANCIA_PERTO) {
 			fire(2);
 			fire(2);
 		} else {
