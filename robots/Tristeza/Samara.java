@@ -166,4 +166,16 @@ public class Samara extends Robot {
 			out.println("Cai mas cai atirando!!" + corner);
 		}
 	}
+	
+	/**
+	 * Comemoração ao vencer a rodada na arena
+	 */
+	 public void onWin(WinEvent e) {
+		 for (int i = 0; i < 8; i++) {
+			 turnRight(45);
+			 turnGunLeft(45);
+		}
+		out.println("Ganhamos, querida! Samara arrasou com todes e venceu.");
+	}
+		
 }
