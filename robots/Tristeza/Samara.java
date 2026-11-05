@@ -69,6 +69,16 @@ public class Samara extends Robot {
 		    back(100);
 		
 		}
+		
+// Ao colidir com a parede, vira de costas para o obstáculo e afasta-se
+	public void onHitWall(HitWallEvent e) {
+		// Vira na direção oposta ao ponto de impacto na parede
+		turnRight(-e.getBearing());
+		// Dá ré com força para se afastar da borda
+		back(150);
+	}
+	 
+
 	/**
 	 * Navigates to a corner of the battlefield using a simple but inefficient approach.
 	 * This method could be optimized for better performance.
