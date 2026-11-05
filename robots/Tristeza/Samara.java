@@ -38,11 +38,11 @@ public class Samara extends Robot {
 	 */
 	public void run() {
 		// Set colors
-		setBodyColor(Color.pink);
-		setGunColor(Color.blue);
-		setRadarColor(Color.green);
-		setBulletColor(Color.yellow);
-		setScanColor(Color.pink);
+		setBodyColor(new Color(128, 0, 128));   // Corpo: Roxo
+		setGunColor(new Color(255, 105, 180));  // Canhão: Rosa
+		setRadarColor(new Color(186, 85, 211)); // Radar: Orquídea
+		setBulletColor(Color.pink);             // Balas: Rosa
+		setScanColor(Color.magenta);            // Feixe do Radar: Magenta
 
 		// Save # of other bots
 		others = getOthers();
@@ -69,6 +69,29 @@ public class Samara extends Robot {
 		    back(100);
 		
 		}
+		
+// Ao colidir com a parede, vira de costas para o obstáculo e afasta-se
+	public void onHitWall(HitWallEvent e) {
+		// Vira na direção oposta ao ponto de impacto na parede
+		turnRight(-e.getBearing());
+		// Dá ré com força para se afastar da borda
+		back(150);
+	}
+	 
+	/**
+	 * Ao colidir com outro robo, descarrega tiro a queima roupa e recua.
+	 */
+	public void onHitRobot(HitRobotEvent e) {
+		// Se a arma estiver fria, dispara na forca maxima
+		if (e.getBearing() > -90 && e.getBearing() <= 90) {
+			fire(3);
+			back(80);
+		} else {
+			fire(3);
+			ahead(80);
+		}
+	}
+
 	/**
 	 * Navigates to a corner of the battlefield using a simple but inefficient approach.
 	 * This method could be optimized for better performance.
@@ -166,4 +189,16 @@ public class Samara extends Robot {
 			out.println("Cai mas cai atirando!!" + corner);
 		}
 	}
+	
+	/**
+	 * Comemoração ao vencer a rodada na arena
+	 */
+	 public void onWin(WinEvent e) {
+		 for (int i = 0; i < 8; i++) {
+			 turnRight(45);
+			 turnGunLeft(45);
+		}
+		out.println("Ganhamos, querida! Samara arrasou com todes e venceu.");
+	}
+		
 }
