@@ -78,6 +78,19 @@ public class Samara extends Robot {
 		back(150);
 	}
 	 
+	/**
+	 * Ao colidir com outro robo, descarrega tiro a queima roupa e recua.
+	 */
+	public void onHitRobot(HitRobotEvent e) {
+		// Se a arma estiver fria, dispara na forca maxima
+		if (e.getBearing() > -90 && e.getBearing() <= 90) {
+			fire(3);
+			back(80);
+		} else {
+			fire(3);
+			ahead(80);
+		}
+	}
 
 	/**
 	 * Navigates to a corner of the battlefield using a simple but inefficient approach.
