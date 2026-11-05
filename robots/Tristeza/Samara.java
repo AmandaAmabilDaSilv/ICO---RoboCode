@@ -38,11 +38,11 @@ public class Samara extends Robot {
 	 */
 	public void run() {
 		// Set colors
-		setBodyColor(Color.pink);
-		setGunColor(Color.blue);
-		setRadarColor(Color.green);
-		setBulletColor(Color.yellow);
-		setScanColor(Color.pink);
+		setBodyColor(new Color(128, 0, 128));   // Corpo: Roxo
+		setGunColor(new Color(255, 105, 180));  // Canhão: Rosa
+		setRadarColor(new Color(186, 85, 211)); // Radar: Orquídea
+		setBulletColor(Color.pink);             // Balas: Rosa
+		setScanColor(Color.magenta);            // Feixe do Radar: Magenta
 
 		// Save # of other bots
 		others = getOthers();
